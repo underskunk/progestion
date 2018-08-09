@@ -16,7 +16,7 @@ session_start();
 
 if(!empty($_SESSION['login'])) {
 	echo '<h1>Connection en cours...</h1>';
-	header('Location: pages/profile.php');
+	header('Location: pages/projet.php');
 	exit;
 } else {
 ?>
@@ -54,18 +54,17 @@ if(!empty($_SESSION['login'])) {
 			$pseudo = $_POST['login'];
 			$mdp = $_POST['mdp'];
 
-
 			$verif_membre = $pdo->prepare("SELECT * FROM `membres` WHERE `pseudo` LIKE :pseudo");
 			$verif_membre->execute(array(
 				    ':pseudo' => $pseudo,
 				));
 			$result = $verif_membre->fetchAll();
-
 			if(count($result) == 0) {
 				echo 'Le mot de passe et le login ne correspondent pas.';
 			} elseif (password_verify($mdp, $result[0]['mdp'])) {
 			    $_SESSION['login'] =  $_POST['login'];
-				header('Location: pages/profile.php');
+			    $_SESSION['id'] = $result[0]['id_membre'];
+				header('Location: pages/projet.php');
 				exit;
 			}
 		} else {
@@ -106,8 +105,8 @@ if(!empty($_SESSION['login'])) {
 					    ':prenom' => $prenom,
 					    ':mdp' => password_hash($insc_mdp, PASSWORD_BCRYPT)
 					));
-				$_SESSION['login'] =  $_POST['insc_login'];
-				header('Location: pages/profile.php');
+				//$_SESSION['login'] =  $_POST['insc_login'];
+				header('Location: pages/projet.php');
 				exit;
 		}
 	}
